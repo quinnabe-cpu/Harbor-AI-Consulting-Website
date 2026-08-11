@@ -1,0 +1,34 @@
+# This repo holds only what the deployed site needs: index.html and assets/.
+# Everything below stays on the local machine.
+
+# Dependencies — reinstalled with `npm install`, never committed
+node_modules/
+
+# Screenshot output from screenshot.mjs — local working files
+temporary screenshots/
+
+# Local dev tooling — not needed to serve the site
+package.json
+package-lock.json
+serve.mjs
+screenshot.mjs
+
+# Internal working docs and design source files
+CLAUDE.md
+brainstorms/
+brand_assets/
+*.code-workspace
+
+# Editor and OS noise
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Vercel
+.vercel/
+
+# Local environment files — never commit secrets
+.env
+.env.local
+.env*.local
