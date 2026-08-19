@@ -105,8 +105,8 @@ tailwind.config = {
     <p class="eyebrow eyebrow--onDark mb-3">Privacy</p>
     <h1 class="h1 text-white max-w-[20ch]">What we collect, and what we do with it</h1>
     <p class="lede mt-4 max-w-[58ch]" style="color:rgba(221,230,242,.82)">
-      This site does not track you. There are no cookies, no analytics, and no advertising.
-      The only personal information we hold is what you choose to send us.
+      This site sets no cookies and carries no advertising. It counts visits using a tool that
+      cannot identify you. The only personal information we hold is what you choose to send us.
     </p>
     <p class="src mt-5">Last updated August 19, 2026</p>
   </div>
@@ -199,10 +199,17 @@ tailwind.config = {
           <strong>The styling library loads from a public CDN.</strong> The site's stylesheet
           framework is served from a content delivery network, which likewise sees the request.
         </li>
+        <li>
+          <strong>Your visit is counted.</strong> Our host adds Cloudflare Web Analytics to every
+          page. It records that a page was viewed, roughly where in the world the request came
+          from, and what kind of device and browser was used. It sets <strong>no cookies</strong>,
+          does not build a profile of you, and does not follow you to any other website. It tells
+          us how many people read a page. It cannot tell us who they are.
+        </li>
       </ul>
       <p>
-        We do not receive, store, or look at any of that. It is not connected to your name and we
-        have no way to identify you from it.
+        Apart from the visit counts, we do not receive, store, or look at any of that. None of it is
+        connected to your name and we have no way to identify you from it.
       </p>
 
       <h2 id="not">2. What we do not do</h2>
@@ -212,7 +219,7 @@ tailwind.config = {
       </p>
       <ul>
         <li><strong>No cookies.</strong> This site sets none at all, so there is no cookie banner to click.</li>
-        <li><strong>No analytics.</strong> We do not run Google Analytics or any other visitor measurement tool. We genuinely do not know how many people visit.</li>
+        <li><strong>No Google Analytics.</strong> The only measurement here is the cookieless visit count described above, which reports totals and nothing about you as an individual.</li>
         <li><strong>No tracking pixels, no advertising networks, no retargeting.</strong> Nothing follows you to another site.</li>
         <li><strong>No selling or renting your information.</strong> Not to data brokers, not to anyone, not for any price.</li>
         <li><strong>No newsletter you did not ask for.</strong> Sending us a message does not add you to a mailing list.</li>
@@ -220,8 +227,9 @@ tailwind.config = {
       </ul>
       <div class="note">
         <p>
-          <strong>If this changes, this page changes first.</strong> If we ever add analytics, we
-          will update this policy and the date at the top of it before turning anything on.
+          <strong>If this changes, this page changes first.</strong> If we ever add a tool that
+          identifies individual visitors, we will update this policy and the date at the top of it
+          before turning anything on.
         </p>
       </div>
 
@@ -261,7 +269,7 @@ tailwind.config = {
             </tr>
             <tr>
               <td>Cloudflare</td>
-              <td>Website hosting and DNS</td>
+              <td>Website hosting, DNS, and the cookieless visit counting described in section 1</td>
               <td><a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Privacy policy</a></td>
             </tr>
             <tr>
