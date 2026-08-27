@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Harbor AI Consulting">
+  <title>Harbor AI Consulting</title>
+
+  <!-- Navy field. Matches the site's theme-color #0D1B3D. -->
+  <rect width="64" height="64" rx="10" fill="#0D1B3D"/>
+
+  <!-- Finial -->
+  <rect x="31" y="5" width="2" height="5" fill="#FFFFFF"/>
+
+  <!-- Dome -->
+  <path d="M24 15 Q32 6.5 40 15 Z" fill="#FFFFFF"/>
+
+  <!-- Lamp room, with the light itself in the brand's light blue -->
+  <rect x="25" y="15" width="14" height="9" fill="#FFFFFF"/>
+  <rect x="29.4" y="16.8" width="5.2" height="7.2" fill="#7FA8D6"/>
+
+  <!-- Gallery -->
+  <rect x="21.5" y="24" width="21" height="3.2" fill="#FFFFFF"/>
+
+  <!-- Tapered tower -->
+  <path d="M25.5 27.2 L38.5 27.2 L41.5 52 L22.5 52 Z" fill="#FFFFFF"/>
+
+  <!-- Band across the tower, echoing the striped tower in the Harbor mark -->
+  <path d="M26.6 36 L37.4 36 L38.2 43 L25.8 43 Z" fill="#0D1B3D"/>
+
+  <!-- Base -->
+  <rect x="18" y="52" width="28" height="6" fill="#FFFFFF"/>
+</svg>
