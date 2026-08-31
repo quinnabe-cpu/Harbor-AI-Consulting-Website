@@ -209,8 +209,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible{
 .data-table{ width:100%; border-collapse:collapse; font-size:.875rem; margin:var(--s-2) 0 var(--s-3); }
 .data-table th, .data-table td{ text-align:left; padding:.6rem .75rem; border-bottom:1px solid var(--mist); vertical-align:top; }
 .data-table th{ font-weight:600; color:var(--navy); font-family:'Poppins',sans-serif; font-size:.8125rem; }
-/* the link column must not wrap "Privacy policy" onto two lines */
-.data-table th:last-child, .data-table td:last-child{ white-space:nowrap; width:1%; }
+/* Two-column table: give the label column a fixed share so the description column wraps
+   normally. The old rule here set white-space:nowrap on the last column for a "Privacy policy"
+   link column that no longer exists - leaving it made every description run on one line. */
+.data-table th:first-child, .data-table td:first-child{ width:32%; }
 .table-scroll{ overflow-x:auto; }
 
 /* in-page contents */
