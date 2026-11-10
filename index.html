@@ -191,6 +191,7 @@
   }
   .pl { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
   .pl-sky  { transform: translate3d(0, calc(var(--h) * calc(var(--svh) * 20)), 0); }
+  .pl-phone-cloud { display: none; }
   /* only the background answers the scroll: the sky and the far shore. The lighthouse, the water and the boat do not. */
   .sheet {
     position: absolute;
@@ -248,7 +249,8 @@
     .hero-reserve { flex-basis: max(0px, calc(var(--u) * (var(--yb) - 238) - var(--ov, 0px))); }
     /* Reuse one desktop cloud, moved into the phone composition without redrawing it. */
     .pl-fore, .cloud { display: none; }
-    .cloud--b:not(.cloud--c) { display: inline; transform: translate(var(--cloud-x, -350px), 300px); }
+    .pl-phone-cloud { display: block; }
+    .phone-cloud-shape { transform: translate(var(--cloud-x, -350px), 300px); }
     /* on a phone the birds sit left of the lighthouse: on its right they ran off the edge of the screen */
     .birds { transform: translate(2360px, 130px) scale(-1, 1); }
     .boat { left: 8vw; width: calc(var(--u) * 70); }
@@ -570,6 +572,14 @@
       </g>
       <g class="birds" fill="none" stroke="#0D1B3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".7">
         <path d="M1262 300q8-9 15 0q7-9 15 0"/><path d="M1312 276q6-7 11 0q5-7 11 0"/><path d="M1236 268q5-6 9 0q4-6 9 0"/>
+      </g>
+    </svg></div>
+  </div>
+  <div class="pl pl-phone-cloud" aria-hidden="true">
+    <div class="sheet"><svg viewBox="0 0 1600 900">
+      <g class="phone-cloud-shape" fill="#FFFFFF" opacity=".72">
+        <ellipse cx="1040" cy="152" rx="50" ry="20"/><ellipse cx="1090" cy="136" rx="60" ry="30"/><ellipse cx="1146" cy="150" rx="48" ry="20"/>
+        <rect x="996" y="150" width="198" height="22" rx="11"/>
       </g>
     </svg></div>
   </div>
@@ -897,6 +907,7 @@
   const steps = [...wrap.querySelectorAll('.course > li')];
   const hero = document.querySelector('.hero');
   const sky = hero.querySelector('.pl-sky');
+  const phoneCloud = hero.querySelector('.pl-phone-cloud');
   const far = hero.querySelector('.sheet--far');
   const courseBoat = wrap.querySelector('.course-boat');
   const courseFill = wrap.querySelector('.course-fill');
@@ -907,6 +918,7 @@
   const paintMotion = () => {
     // Write transforms on the moving elements, not inherited variables on the entire scene.
     sky.style.transform = `translate3d(0,${(skyNow * motionH * .2).toFixed(3)}px,0)`;
+    phoneCloud.style.transform = `translate3d(0,${(skyNow * motionH * .1).toFixed(3)}px,0)`;
     far.style.transform = `translate3d(${(-skyNow * motionW * .03).toFixed(3)}px,0,0)`;
     courseBoat.style.transform = `translate3d(0,${boatNow.toFixed(3)}px,0)`;
     courseFill.style.transform = `scaleY(${boatNow / railH})`;
