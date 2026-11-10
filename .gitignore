@@ -32,3 +32,6 @@ desktop.ini
 .env
 .env.local
 .env*.local
+
+# scroll-craft drafts and their screenshots: local only until a build is approved
+scrollcraft/
