@@ -908,6 +908,7 @@
   const hero = document.querySelector('.hero');
   const sky = hero.querySelector('.pl-sky');
   const phoneCloud = hero.querySelector('.pl-phone-cloud');
+  const phoneMotion = matchMedia('(max-width: 760px)');
   const far = hero.querySelector('.sheet--far');
   const courseBoat = wrap.querySelector('.course-boat');
   const courseFill = wrap.querySelector('.course-fill');
@@ -917,8 +918,8 @@
   let motionFrame = 0, lastFrame = 0;
   const paintMotion = () => {
     // Write transforms on the moving elements, not inherited variables on the entire scene.
-    sky.style.transform = `translate3d(0,${(skyNow * motionH * .2).toFixed(3)}px,0)`;
-    phoneCloud.style.transform = `translate3d(0,${(skyNow * motionH * .1).toFixed(3)}px,0)`;
+    sky.style.transform = `translate3d(0,${(skyNow * motionH * (phoneMotion.matches ? .1 : .2)).toFixed(3)}px,0)`;
+    phoneCloud.style.transform = `translate3d(0,${(skyNow * motionH * .05).toFixed(3)}px,0)`;
     far.style.transform = `translate3d(${(-skyNow * motionW * .03).toFixed(3)}px,0,0)`;
     courseBoat.style.transform = `translate3d(0,${boatNow.toFixed(3)}px,0)`;
     courseFill.style.transform = `scaleY(${boatNow / railH})`;
