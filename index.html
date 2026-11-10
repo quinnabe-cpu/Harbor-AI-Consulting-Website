@@ -29,6 +29,10 @@
 <link rel="stylesheet" href="scrollcraft.css">
 
 <style>
+  /* --svh is one hundredth of the screen height. On phones a script below replaces it with a fixed
+     pixel value, because Chrome on iPhone changes the screen height when its bars hide during a
+     scroll, and that resized the whole harbor scene mid-scroll (reported 2026-11-10). */
+  :root { --svh: 1svh; }
   /* ---------- brand tokens: the light ground is the default ---------- */
   :root {
     --sc-canvas: #FFFFFF;
@@ -140,7 +144,10 @@
     padding: 0 var(--edge) .75rem; box-shadow: 0 22px 30px -20px rgba(13,27,61,.35); }
   .menu-panel a { padding: .95rem 0; border-top: 1px solid var(--sc-hairline); color: var(--navy); font-weight: 500; text-decoration: none; }
   @media (max-width: 960px) { .bar-nav { display: none; } .menu { display: block; } }
-  @media (max-width: 420px) { .lockup-word { display: none; } .bar .btn--sm { padding: .65rem .7rem; font-size: .78rem; } }
+  /* below 480px the name beside the mark does not fit next to Menu and the button (it overlapped Menu at 421 to 459px) */
+  .lockup { flex: none; }
+  @media (max-width: 480px) { .lockup-word { display: none; } }
+  @media (max-width: 420px) { .bar .btn--sm { padding: .65rem .7rem; font-size: .78rem; } }
 
   /* Decided 2026-11-10: the top bar has no lines and no boxes, except the logo, which keeps its
      brand-guide lines beside AI CONSULTING. No underline under the section being read or on hover,
@@ -163,18 +170,18 @@
      ===================================================================== */
   .hero {
     --h: clamp(0, calc((var(--sc-p, .5) - .5) * 2), 1);
-    --u: min(.125svh, .085vw);
+    --u: min(calc(var(--svh) * .125), .085vw);
     --lx: 84vw;
     --yb: 800;
     --sea: calc(var(--u) * (var(--yb) - 596));
-    position: relative; min-height: 100svh; overflow: clip;
+    position: relative; min-height: calc(var(--svh) * 100); overflow: clip;
     display: flex; flex-direction: column;
     background:
       radial-gradient(58% 60% at 22% 26%, rgba(255,255,255,.62), rgba(255,255,255,0) 70%),
       linear-gradient(180deg, #8DB4E0 0%, #B4CFEC 46%, #E3EDF8 80%, #F2F6FB 100%);
   }
   .pl { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
-  .pl-sky  { transform: translate3d(0, calc(var(--h) * 20svh), 0); }
+  .pl-sky  { transform: translate3d(0, calc(var(--h) * calc(var(--svh) * 20)), 0); }
   /* only the background answers the scroll: the sky and the far shore. The lighthouse, the water and the boat do not. */
   .sheet {
     position: absolute;
@@ -187,7 +194,7 @@
   /* clouds and birds do not move (decided 2026-11-10). Only the boat and the light on the water do. */
 
   .water {
-    position: absolute; left: 0; right: 0; bottom: -24svh; height: calc(var(--sea) + 24svh);
+    position: absolute; left: 0; right: 0; bottom: calc(var(--svh) * -24); height: calc(var(--sea) + calc(var(--svh) * 24));
     background: linear-gradient(180deg, #86A9D4 0, #6890C2 calc(var(--u) * 22), #46719F calc(var(--u) * 90), #325A8B calc(var(--u) * 210), #284C7B 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
   }
@@ -207,27 +214,29 @@
 
   .hero-copy {
     position: relative; z-index: 3;
-    padding: calc(var(--bar-h) + clamp(1.75rem, 7svh, 5.5rem)) var(--edge) 0;
+    padding: calc(var(--bar-h) + clamp(1.75rem, calc(var(--svh) * 7), 5.5rem)) var(--edge) 0;
   }
   .hero-copy h1 {
     font-weight: 600; color: var(--navy);
-    font-size: clamp(2.1rem, min(6vw, 10.2svh), 5.6rem);
+    font-size: clamp(2.1rem, min(6vw, calc(var(--svh) * 10.2)), 5.6rem);
     line-height: 1.03; letter-spacing: -0.035em; max-width: 12.7em;
   }
   .hero-copy h1 > span { display: block; text-wrap: balance; }
   .hero-copy h1 .nw { white-space: nowrap; }
-  .hero-copy .lede { margin-top: clamp(1.1rem, 2.6svh, 1.75rem); max-width: 60ch; color: #1C2C4E; }
-  .hero-cta { margin-top: clamp(1.25rem, 3svh, 2rem); display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1.25rem; }
+  .hero-copy .lede { margin-top: clamp(1.1rem, calc(var(--svh) * 2.6), 1.75rem); max-width: 60ch; color: #1C2C4E; }
+  .hero-cta { margin-top: clamp(1.25rem, calc(var(--svh) * 3), 2rem); display: flex; flex-wrap: wrap; align-items: center; gap: .9rem 1.25rem; }
   .hero-cta p { font-size: .875rem; color: #2C3F63; }
   .hero-reserve { flex: 1 0 calc(var(--u) * 250); }
 
   @media (max-width: 760px) {
-    .hero { --u: min(.075svh, .165vw); --lx: 80vw; --yb: 760; }
+    .hero { --u: min(calc(var(--svh) * .075), .165vw); --lx: 80vw; --yb: 760; }
     .hero-copy { padding-top: calc(var(--bar-h) + 1.5rem); }
     .hero-copy h1 { font-size: clamp(1.9rem, 10.3vw, 3rem); line-height: 1.06; }
     .hero-copy .lede { font-size: 1rem; line-height: 1.55; }
     .hero-reserve { flex-basis: calc(var(--u) * (var(--yb) - 228)); }
     .pl-fore, .cloud--b { display: none; }
+    /* on a phone the birds sit left of the lighthouse: on its right they ran off the edge of the screen */
+    .birds { transform: translate(2360px, 0) scale(-1, 1); }
     .boat { left: 8vw; width: calc(var(--u) * 70); }
   }
 
@@ -376,6 +385,16 @@
   .legal a { font-size: inherit; }
   .foot .lockup { color: #fff; } .foot .lockup-sub { color: var(--mist); }
 </style>
+<script>
+  // Phones only: fix the height unit at load. Update it only when the width changes (rotation).
+  (function () {
+    if (!window.matchMedia || !matchMedia('(pointer: coarse)').matches) return;
+    var root = document.documentElement, w = window.innerWidth;
+    function set() { root.style.setProperty('--svh', (window.innerHeight / 100) + 'px'); }
+    set();
+    window.addEventListener('resize', function () { if (window.innerWidth !== w) { w = window.innerWidth; set(); } });
+  })();
+</script>
 <noscript><style>
   [data-sc-in], [data-sc-stagger] > * { opacity: 1 !important; transform: none !important; }
   [data-sc-reveal] { clip-path: none !important; }
