@@ -291,7 +291,6 @@
     var vh = innerHeight, vw = innerWidth;
     var y = 0, needsLayout = true;
     var progressBar = root.querySelector('[data-sc-progress]');
-    var staticMobileMQ = matchMedia('(max-width: 760px), (pointer: coarse)');
     var docEl = document.documentElement;
 
     // One rate for the page, overridable per clip. Read from the mount root, the
@@ -822,9 +821,6 @@
 
       for (var i = 0; i < acts.length; i++) {
         var a = acts[i];
-        // Static mobile scenery needs no inherited progress writes. Those writes
-        // invalidate styles throughout a large SVG scene on every scroll frame.
-        if (a.el.hasAttribute('data-sc-static-mobile') && staticMobileMQ.matches) continue;
         var raw;
         if (a.pinned) {
           var travel = Math.max(a.height - vh, 1);

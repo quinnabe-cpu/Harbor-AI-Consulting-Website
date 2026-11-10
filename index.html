@@ -200,13 +200,7 @@
   }
   .sheet svg { display: block; width: 100%; height: 100%; max-width: none; overflow: visible; }
   .sheet--far { transform: translate3d(calc(var(--h) * -3vw), 0, 0); will-change: transform; }
-  /* Touch scrolling runs independently of JavaScript. Keep the scenery attached
-     to the page on phones so delayed scroll events and browser bars cannot move it. */
-  @media (max-width: 760px), (pointer: coarse) {
-    .hero { --h: 0; }
-    .pl-sky, .sheet--far { transform: none; will-change: auto; }
-  }
-  /* clouds and birds do not move (decided 2026-11-10). Only the boat and the light on the water do. */
+  /* Sky and far shore follow scroll; the boat and water also move while idle. */
 
   .water {
     position: absolute; left: 0; right: 0; bottom: calc(var(--svh) * -24); height: calc(var(--sea) + calc(var(--svh) * 24));
@@ -252,8 +246,9 @@
     .hero-copy h1 { font-size: clamp(1.9rem, 10.3vw, 3rem); line-height: 1.06; }
     .hero-copy .lede { font-size: 1rem; line-height: 1.55; }
     .hero-reserve { flex-basis: max(0px, calc(var(--u) * (var(--yb) - 238) - var(--ov, 0px))); }
-    /* no clouds on a phone: the one beside the lighthouse was cut off by the edge of the screen */
+    /* Reuse one desktop cloud, moved into the phone composition without redrawing it. */
     .pl-fore, .cloud { display: none; }
+    .cloud--b:not(.cloud--c) { display: inline; transform: translate(var(--cloud-x, -350px), 300px); }
     /* on a phone the birds sit left of the lighthouse: on its right they ran off the edge of the screen */
     .birds { transform: translate(2360px, 130px) scale(-1, 1); }
     .boat { left: 8vw; width: calc(var(--u) * 70); }
@@ -324,11 +319,11 @@
   /* control: the course, and the boat that follows it. --k is the boat's place on the line, 0 to 1 */
   .course-wrap { position: relative; --k: 0; }
   .course { list-style: none; margin: 0; padding: 0; }
-  .course-rail { position: absolute; left: 17px; top: 14px; bottom: 18px; width: 2px; container-type: size; }
+  .course-rail { position: absolute; left: 17px; top: 14px; bottom: 18px; width: 2px; }
   .course-track { position: absolute; inset: 0; background: repeating-linear-gradient(180deg, rgba(221,230,242,.4) 0 6px, transparent 6px 12px); }
   .course-fill { position: absolute; inset: 0; background: var(--sky); transform-origin: 50% 0; transform: scaleY(var(--k)); will-change: transform; }
   .course-boat { position: absolute; left: 50%; top: 0; width: 22px; height: 30px; margin: -15px 0 0 -11px;
-    transform: translate3d(0, calc(var(--k) * 100cqh), 0); will-change: transform; }
+    transform: translate3d(0, calc(var(--k) * var(--rail-h, 0px)), 0); will-change: transform; }
   .course-boat svg { display: block; width: 100%; height: 100%; }
   .course li { position: relative; padding-left: 3.75rem; --on: clamp(0, calc((var(--k) - var(--t, 0)) * 40 + 1), 1); }
   .course li + li { margin-top: 2.6rem; }
@@ -558,7 +553,7 @@
 <main id="top" tabindex="-1">
 
 <!-- ============ 1 · RECOGNITION: one sentence in a clear sky ============ -->
-<section class="hero" data-sc-act="flow" data-sc-static-mobile>
+<section class="hero">
   <div class="pl pl-sky" aria-hidden="true">
     <div class="sheet"><svg viewBox="0 0 1600 900">
       <g class="cloud" fill="#FFFFFF" opacity=".9">
@@ -853,6 +848,7 @@
       var copyBottom = copy.offsetTop + copy.offsetHeight;
       var u = Math.max(0.34, Math.min((H - btnBottom) / 492, window.innerWidth * 0.00165));
       hero.style.setProperty('--u', u.toFixed(4) + 'px');
+      hero.style.setProperty('--cloud-x', (90 - window.innerWidth * .52 / u).toFixed(3) + 'px');
       hero.style.setProperty('--ov', Math.max(0, copyBottom - btnBottom) + 'px');
     }
     fit();
@@ -899,11 +895,51 @@
   const wrap = document.querySelector('.course-wrap');
   const rail = wrap.querySelector('.course-rail');
   const steps = [...wrap.querySelectorAll('.course > li')];
+  const hero = document.querySelector('.hero');
+  const sky = hero.querySelector('.pl-sky');
+  const far = hero.querySelector('.sheet--far');
+  const courseBoat = wrap.querySelector('.course-boat');
+  const courseFill = wrap.querySelector('.course-fill');
+  const touchMotion = matchMedia('(pointer: coarse)').matches;
+  let motionH = innerHeight, motionW = innerWidth, heroH = 1, railTop = 0;
+  let skyNow = 0, boatNow = 0, skyTarget = 0, boatTarget = 0;
+  let motionFrame = 0, lastFrame = 0;
+  const paintMotion = () => {
+    // Write transforms on the moving elements, not inherited variables on the entire scene.
+    sky.style.transform = `translate3d(0,${(skyNow * motionH * .2).toFixed(3)}px,0)`;
+    far.style.transform = `translate3d(${(-skyNow * motionW * .03).toFixed(3)}px,0,0)`;
+    courseBoat.style.transform = `translate3d(0,${boatNow.toFixed(3)}px,0)`;
+    courseFill.style.transform = `scaleY(${boatNow / railH})`;
+    wrap.style.setProperty('--k', (boatNow / railH).toFixed(5));
+  };
+  const animateMotion = time => {
+    const dt = lastFrame ? Math.min(time - lastFrame, 64) : 16.67;
+    lastFrame = time;
+    const blend = 1 - Math.exp(-dt / 70);
+    skyNow += (skyTarget - skyNow) * blend;
+    boatNow += (boatTarget - boatNow) * blend;
+    const moving = Math.abs(skyTarget - skyNow) * motionH > .01 || Math.abs(boatTarget - boatNow) > .01;
+    if (!moving) { skyNow = skyTarget; boatNow = boatTarget; }
+    paintMotion();
+    motionFrame = moving ? requestAnimationFrame(animateMotion) : 0;
+    if (!moving) lastFrame = 0;
+  };
+  const targetMotion = () => {
+    if (reduced) return;
+    skyTarget = Math.min(1, Math.max(0, scrollY / heroH));
+    boatTarget = Math.min(railH, Math.max(0, scrollY + motionH * .5 - railTop));
+    if (!motionFrame) motionFrame = requestAnimationFrame(animateMotion);
+  };
   let railH = 1;
   const measure = () => {
     railH = Math.max(steps[steps.length - 1].offsetTop, 1);
     rail.style.bottom = 'auto'; rail.style.height = railH + 'px';
+    rail.style.setProperty('--rail-h', railH + 'px');
     steps.forEach(li => li.style.setProperty('--t', (li.offsetTop / railH).toFixed(4)));
+    // Section entrance transforms must not change the rail's document coordinate.
+    railTop = 0;
+    for (let el = rail; el; el = el.offsetParent) railTop += el.offsetTop;
+    heroH = hero.offsetHeight;
   };
   const navLinks = [...document.querySelectorAll('.bar-nav a')];
   const navTargets = navLinks.map(a => document.querySelector(a.getAttribute('href')));
@@ -914,14 +950,16 @@
     navTargets.forEach((t, i) => { if (t.getBoundingClientRect().top <= line) current = i; });
     if (contact.getBoundingClientRect().top <= line) current = -1;
     navLinks.forEach((a, i) => { if (i === current) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-    if (!reduced) {
-      const k = (innerHeight * 0.5 - rail.getBoundingClientRect().top) / railH;
-      wrap.style.setProperty('--k', Math.min(1, Math.max(0, k)).toFixed(4));
-    }
+    targetMotion();
   };
   measure(); sync();
   addEventListener('scroll', sync, { passive: true });
-  addEventListener('resize', () => { measure(); sync(); });
+  addEventListener('resize', () => {
+    // Browser bars change height during touch scrolling; keep motion coordinates stable.
+    if (touchMotion && innerWidth === motionW) return;
+    motionW = innerWidth; motionH = innerHeight;
+    measure(); sync();
+  });
   if (document.fonts) document.fonts.ready.then(() => { measure(); sync(); });
 
   document.getElementById('year').textContent = new Date().getFullYear();
