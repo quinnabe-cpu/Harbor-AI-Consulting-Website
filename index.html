@@ -146,8 +146,17 @@
   @media (max-width: 960px) { .bar-nav { display: none; } .menu { display: block; } }
   /* below 480px the name beside the mark does not fit next to Menu and the button (it overlapped Menu at 421 to 459px) */
   .lockup { flex: none; }
-  @media (max-width: 480px) { .lockup-word { display: none; } }
-  @media (max-width: 420px) { .bar .btn--sm { padding: .65rem .7rem; font-size: .78rem; } }
+  /* phones: the name stays beside the mark. To make room without changing any size, the bar button
+     reads "Book a call" here, and Menu sits midway between the name and the button. */
+  .lbl-short { display: none; }
+  @media (max-width: 480px) {
+    .bar { gap: .25rem; }
+    .bar-right { flex: 1 1 auto; }
+    .menu { margin-inline: auto; }
+    .lbl-full { display: none; }
+    .lbl-short { display: inline; }
+  }
+  @media (max-width: 349px) { .lockup-word { display: none; } }
 
   /* Decided 2026-11-10: the top bar has no lines and no boxes, except the logo, which keeps its
      brand-guide lines beside AI CONSULTING. No underline under the section being read or on hover,
@@ -229,14 +238,18 @@
   .hero-reserve { flex: 1 0 calc(var(--u) * 250); }
 
   @media (max-width: 760px) {
-    .hero { --u: min(calc(var(--svh) * .075), .165vw); --lx: 80vw; --yb: 760; }
-    .hero-copy { padding-top: calc(var(--bar-h) + 1.5rem); }
+    /* On phones a script (before the engine script) sets --u so the whole hero fits the visible screen,
+       and --ov, the height of the small note under the button, which the lighthouse may rise beside. */
+    .hero { --u: min(calc(var(--svh) * .075), .165vw); --lx: 80vw; --yb: 730; }
+    .hero-copy { padding-top: calc(var(--bar-h) + .9rem); }
+    .hero-cta p { max-width: calc(74vw - var(--edge) - 12px); }
     .hero-copy h1 { font-size: clamp(1.9rem, 10.3vw, 3rem); line-height: 1.06; }
     .hero-copy .lede { font-size: 1rem; line-height: 1.55; }
-    .hero-reserve { flex-basis: calc(var(--u) * (var(--yb) - 228)); }
-    .pl-fore, .cloud--b { display: none; }
+    .hero-reserve { flex-basis: max(0px, calc(var(--u) * (var(--yb) - 238) - var(--ov, 0px))); }
+    /* no clouds on a phone: the one beside the lighthouse was cut off by the edge of the screen */
+    .pl-fore, .cloud { display: none; }
     /* on a phone the birds sit left of the lighthouse: on its right they ran off the edge of the screen */
-    .birds { transform: translate(2360px, 0) scale(-1, 1); }
+    .birds { transform: translate(2360px, 130px) scale(-1, 1); }
     .boat { left: 8vw; width: calc(var(--u) * 70); }
   }
 
@@ -390,7 +403,7 @@
   (function () {
     if (!window.matchMedia || !matchMedia('(pointer: coarse)').matches) return;
     var root = document.documentElement, w = window.innerWidth;
-    function set() { root.style.setProperty('--svh', (window.innerHeight / 100) + 'px'); }
+    function set() { window.__lockedH = window.innerHeight; root.style.setProperty('--svh', (window.innerHeight / 100) + 'px'); }
     set();
     window.addEventListener('resize', function () { if (window.innerWidth !== w) { w = window.innerWidth; set(); } });
   })();
@@ -532,7 +545,7 @@
         <a href="#faq">Questions</a>
       </nav>
     </details>
-    <a class="btn btn--navy btn--sm" href="#contact" data-booking>Book a free discovery call</a>
+    <a class="btn btn--navy btn--sm" href="#contact" data-booking><span class="lbl-full">Book a free discovery call</span><span class="lbl-short">Book a call</span></a>
   </div>
 </header>
 
@@ -817,6 +830,32 @@
   </div>
 </footer>
 
+<script>
+  // Phones: size the harbor scene so the whole hero fits the visible screen, between the browser's bars.
+  // The scene is 492 units tall from just above the lighthouse to the bottom of the water. It may start
+  // beside the small note under the button, which is kept clear of the lighthouse by its max-width.
+  (function () {
+    var hero = document.querySelector('.hero'); if (!hero) return;
+    var copy = hero.querySelector('.hero-copy'), btn = hero.querySelector('.hero-cta .btn');
+    var phone = window.matchMedia('(max-width: 760px)'), touch = window.matchMedia('(pointer: coarse)').matches;
+    function fit() {
+      if (!phone.matches) { hero.style.removeProperty('--u'); hero.style.removeProperty('--ov'); return; }
+      var H = (touch && window.__lockedH) || window.innerHeight;
+      var top = 0, el = btn;                               // distance from the top of the hero, unaffected by the load animation
+      while (el && el !== hero) { top += el.offsetTop; el = el.offsetParent; }
+      var btnBottom = top + btn.offsetHeight + 14;
+      var copyBottom = copy.offsetTop + copy.offsetHeight;
+      var u = Math.max(0.34, Math.min((H - btnBottom) / 492, window.innerWidth * 0.00165));
+      hero.style.setProperty('--u', u.toFixed(4) + 'px');
+      hero.style.setProperty('--ov', Math.max(0, copyBottom - btnBottom) + 'px');
+    }
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    window.addEventListener('load', fit);
+    var w = window.innerWidth;
+    window.addEventListener('resize', function () { if (!touch || window.innerWidth !== w) { w = window.innerWidth; fit(); } });
+  })();
+</script>
 <script src="scrollcraft.js"></script>
 <script>
   // BOOKING LINK: change this one line if the Cal.com event ever changes.
