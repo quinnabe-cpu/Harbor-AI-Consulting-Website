@@ -200,6 +200,12 @@
   }
   .sheet svg { display: block; width: 100%; height: 100%; max-width: none; overflow: visible; }
   .sheet--far { transform: translate3d(calc(var(--h) * -3vw), 0, 0); will-change: transform; }
+  /* Touch scrolling runs independently of JavaScript. Keep the scenery attached
+     to the page on phones so delayed scroll events and browser bars cannot move it. */
+  @media (max-width: 760px), (pointer: coarse) {
+    .hero { --h: 0; }
+    .pl-sky, .sheet--far { transform: none; will-change: auto; }
+  }
   /* clouds and birds do not move (decided 2026-11-10). Only the boat and the light on the water do. */
 
   .water {
@@ -552,7 +558,7 @@
 <main id="top" tabindex="-1">
 
 <!-- ============ 1 · RECOGNITION: one sentence in a clear sky ============ -->
-<section class="hero" data-sc-act="flow">
+<section class="hero" data-sc-act="flow" data-sc-static-mobile>
   <div class="pl pl-sky" aria-hidden="true">
     <div class="sheet"><svg viewBox="0 0 1600 900">
       <g class="cloud" fill="#FFFFFF" opacity=".9">
