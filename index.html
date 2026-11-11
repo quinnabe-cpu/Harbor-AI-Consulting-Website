@@ -183,7 +183,7 @@
     --lx: 84vw;
     --yb: 800;
     --sea: calc(var(--u) * (var(--yb) - 596));
-    position: relative; min-height: calc(var(--svh) * 100); overflow: clip;
+    position: relative; min-height: calc(var(--svh) * 100 + var(--tail, 0px)); overflow: clip;
     display: flex; flex-direction: column;
     background:
       radial-gradient(58% 60% at 22% 26%, rgba(255,255,255,.62), rgba(255,255,255,0) 70%),
@@ -196,7 +196,7 @@
   .sheet {
     position: absolute;
     left: calc(var(--lx) - var(--u) * 1180);
-    bottom: calc(var(--u) * (var(--yb) - 900));
+    bottom: calc(var(--u) * (var(--yb) - 900) + var(--tail, 0px));
     width: calc(var(--u) * 1600); height: calc(var(--u) * 900);
   }
   .sheet svg { display: block; width: 100%; height: 100%; max-width: none; overflow: visible; }
@@ -204,7 +204,7 @@
   /* Sky and far shore follow scroll; the boat and water also move while idle. */
 
   .water {
-    position: absolute; left: 0; right: 0; bottom: calc(var(--svh) * -24); height: calc(var(--sea) + calc(var(--svh) * 24));
+    position: absolute; left: 0; right: 0; bottom: calc(var(--svh) * -24); height: calc(var(--sea) + calc(var(--svh) * 24) + var(--tail, 0px));
     background: linear-gradient(180deg, #86A9D4 0, #6890C2 calc(var(--u) * 22), #46719F calc(var(--u) * 90), #325A8B calc(var(--u) * 210), #284C7B 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.55);
   }
@@ -255,13 +255,9 @@
     .birds { transform: translate(2360px, 130px) scale(-1, 1); }
     .boat { left: 8vw; width: calc(var(--u) * 70); }
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-copy h1, .hero-copy .lede, .hero-cta { animation: arrive 760ms var(--sc-ease-out) both; }
-    .hero-copy .lede { animation-delay: 120ms; }
-    .hero-cta { animation-delay: 220ms; }
-  }
-  @keyframes arrive { from { opacity: 0; transform: translate3d(0, 16px, 0); } }
+  /* Touch phones: the water continues 120px below the first screen. Safari on iPhone draws the page
+     under its floating address bar, and the next section showed there. The scene itself does not move. */
+  @media (max-width: 760px) and (pointer: coarse) { .hero { --tail: 120px; } }
 
   @media (prefers-reduced-motion: reduce) {
     .hero { --h: 0; }
@@ -604,7 +600,7 @@
 
   <div class="hero-copy">
     <h1><span>Everyone's telling you to use AI.</span> <span><span class="nw">Nobody's telling</span> you how.</span></h1>
-    <p class="lede">Harbor AI Consulting turns the noise into a short list: what's worth doing in your business, what isn't, and what it takes to start.</p>
+    <p class="lede">For small to medium businesses, Harbor AI Consulting turns the noise into a short list: what's worth doing, what isn't, and what it takes to start.</p>
     <div class="hero-cta">
       <a class="btn btn--navy" href="#contact" data-booking>Book a free discovery call</a>
       <p>A 30-minute call. No cost, no obligation, no sales pitch.</p>
